@@ -28,6 +28,18 @@ let lastScanned = "";
 let lastScannedAt = 0;
 let currentFacingMode = "user";
 let restarting = false;
+let audioContext = null;
+
+function prepareAudio() {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    if (!audioContext) audioContext = new AudioContextClass();
+    if (audioContext.state === "suspended") audioContext.resume();
+  } catch (_) {
+    audioContext = null;
+  }
+}
 
 function isScanning() {
   return Boolean(controls);
@@ -49,19 +61,23 @@ function feedback() {
     // Vibration is optional and unsupported on some iPads.
   }
   try {
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) return;
-    const audio = new AudioContextClass();
-    const oscillator = audio.createOscillator();
-    const gain = audio.createGain();
-    oscillator.frequency.value = 880;
-    gain.gain.value = 0.05;
-    oscillator.connect(gain).connect(audio.destination);
-    oscillator.start();
+    prepareAudio();
+    if (!audioContext) return;
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    const now = audioContext.currentTime;
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(1046, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.16, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+    oscillator.connect(gain).connect(audioContext.destination);
+    oscillator.start(now);
     setTimeout(() => {
       oscillator.stop();
-      audio.close();
-    }, 110);
+      oscillator.disconnect();
+      gain.disconnect();
+    }, 180);
   } catch (_) {
     // Audio feedback is optional; the visual banner is the primary signal.
   }
@@ -150,6 +166,7 @@ function handleTicketId(rawText) {
 }
 
 dataFile.addEventListener("change", async () => {
+  prepareAudio();
   const file = dataFile.files?.[0];
   if (!file) return;
   const data = JSON.parse(await file.text());
@@ -165,6 +182,7 @@ dataFile.addEventListener("change", async () => {
 });
 
 async function startCamera() {
+  prepareAudio();
   if (!ticketMap.size) return;
   if (isScanning() || restarting) return;
   restarting = true;
