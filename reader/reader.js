@@ -26,9 +26,10 @@ let currentTicket = null;
 let controls = null;
 let lastScanned = "";
 let lastScannedAt = 0;
-let currentFacingMode = "user";
+let currentFacingMode = "environment";
 let restarting = false;
 let audioContext = null;
+let detectorTimer = null;
 
 function prepareAudio() {
   try {
@@ -46,6 +47,8 @@ function isScanning() {
 }
 
 function stopCamera(message) {
+  if (detectorTimer) clearInterval(detectorTimer);
+  detectorTimer = null;
   if (controls) controls.stop();
   controls = null;
   startButton.disabled = ticketMap.size === 0;
@@ -98,6 +101,32 @@ function clearResult() {
   fields.ticket.textContent = "-";
   useButton.disabled = true;
   currentTicket = null;
+}
+
+function startNativeDetectorLoop() {
+  if (!("BarcodeDetector" in window)) return;
+  let detector;
+  try {
+    detector = new BarcodeDetector({ formats: ["qr_code"] });
+  } catch (_) {
+    return;
+  }
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+  if (!context) return;
+  detectorTimer = setInterval(async () => {
+    if (!controls || preview.readyState < 2 || !preview.videoWidth || !preview.videoHeight) return;
+    try {
+      canvas.width = preview.videoWidth;
+      canvas.height = preview.videoHeight;
+      context.drawImage(preview, 0, 0, canvas.width, canvas.height);
+      const codes = await detector.detect(canvas);
+      const rawValue = codes?.[0]?.rawValue;
+      if (rawValue) handleTicketId(rawValue);
+    } catch (_) {
+      // Native detection can fail on transient video frames.
+    }
+  }, 120);
 }
 
 function setResult(ticket, state, className) {
@@ -186,21 +215,38 @@ async function startCamera() {
   if (!ticketMap.size) return;
   if (isScanning() || restarting) return;
   restarting = true;
-  const reader = new ZXingBrowser.BrowserQRCodeReader();
+  const reader = new ZXingBrowser.BrowserQRCodeReader(undefined, {
+    delayBetweenScanAttempts: 80,
+    delayBetweenScanSuccess: 250,
+  });
   scanStatus.textContent = "カメラを起動しています。";
   try {
     controls = await reader.decodeFromConstraints(
-      { video: { facingMode: currentFacingMode } },
+      {
+        video: {
+          facingMode: { ideal: currentFacingMode },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+      },
       preview,
       (result) => {
         if (result) handleTicketId(result.getText());
       },
     );
+    try {
+      await controls.streamVideoConstraintsApply?.({
+        advanced: [{ focusMode: "continuous" }],
+      });
+    } catch (_) {
+      // Some iPad/Safari combinations do not expose focus constraints.
+    }
     startButton.disabled = true;
     stopButton.disabled = false;
     switchCameraButton.disabled = false;
     const label = currentFacingMode === "user" ? "前面カメラ" : "背面カメラ";
     scanStatus.textContent = `${label}でQRコードを読み取れます。`;
+    startNativeDetectorLoop();
   } catch (error) {
     controls = null;
     startButton.disabled = ticketMap.size === 0;
