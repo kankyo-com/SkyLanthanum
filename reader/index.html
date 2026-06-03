@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>スカイランタン 受付リーダー</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="../vendor/zxing-browser.min.js"></script>
+</head>
+<body class="app-shell">
+  <header>
+    <h1>スカイランタン 受付リーダー</h1>
+    <p>当日用データを読み込み、購入者のQRコードをiPadカメラで読み取ります。</p>
+  </header>
+  <main>
+    <section class="panel">
+      <div class="controls">
+        <label class="file-label">
+          当日データを選択
+          <input id="dataFile" type="file" accept="application/json,.json">
+        </label>
+        <button id="startButton" disabled>カメラ開始</button>
+        <button id="stopButton" class="secondary" disabled>停止</button>
+        <button id="exportButton" class="secondary" disabled>受渡ログ出力</button>
+      </div>
+      <p id="dataStatus" class="status-line">reader_data.json を選択してください。</p>
+    </section>
+
+    <section class="panel">
+      <video id="preview" muted playsinline></video>
+      <p id="scanStatus" class="status-line">カメラ開始後、QRコードを画面中央に入れてください。</p>
+    </section>
+
+    <section id="result" class="result">
+      <div class="result-grid">
+        <div class="field">
+          <span>状態</span>
+          <strong id="statusValue">-</strong>
+        </div>
+        <div class="field quantity">
+          <span>購入基数</span>
+          <strong id="quantityValue">-</strong>
+        </div>
+        <div class="field">
+          <span>氏名</span>
+          <strong id="nameValue">-</strong>
+        </div>
+        <div class="field">
+          <span>フリガナ</span>
+          <strong id="kanaValue">-</strong>
+        </div>
+        <div class="field">
+          <span>取引番号</span>
+          <strong id="transactionValue">-</strong>
+        </div>
+        <div class="field">
+          <span>チケットID</span>
+          <strong id="ticketValue">-</strong>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="useButton">受渡済にする</button>
+      </div>
+    </section>
+  </main>
+  <script src="./reader.js"></script>
+</body>
+</html>
