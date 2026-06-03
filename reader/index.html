@@ -21,17 +21,19 @@
         </label>
         <button id="startButton" disabled>カメラ開始</button>
         <button id="stopButton" class="secondary" disabled>停止</button>
+        <button id="switchCameraButton" class="secondary" disabled>カメラ切替</button>
         <button id="exportButton" class="secondary" disabled>受渡ログ出力</button>
       </div>
       <p id="dataStatus" class="status-line">reader_data.json を選択してください。</p>
     </section>
 
-    <section class="panel">
+    <section class="panel camera-panel">
       <video id="preview" muted playsinline></video>
       <p id="scanStatus" class="status-line">カメラ開始後、QRコードを画面中央に入れてください。</p>
     </section>
 
     <section id="result" class="result">
+      <div id="resultBanner" class="result-banner">読み取り待ち</div>
       <div class="result-grid">
         <div class="field">
           <span>状態</span>
@@ -60,6 +62,7 @@
       </div>
       <div class="actions">
         <button id="useButton">受渡済にする</button>
+        <button id="cancelButton" class="secondary">キャンセルして次を読む</button>
       </div>
     </section>
   </main>

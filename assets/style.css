@@ -45,9 +45,9 @@ header p {
 }
 
 main {
-  width: min(1100px, 100%);
+  width: min(1200px, 100%);
   margin: 0 auto;
-  padding: 20px;
+  padding: 14px 20px 20px;
 }
 
 .panel,
@@ -110,15 +110,21 @@ input[type="file"] {
 
 video {
   width: 100%;
-  max-height: 54vh;
+  height: clamp(210px, 34vh, 360px);
+  object-fit: cover;
   background: #111827;
   border-radius: 8px;
   border: 1px solid #0f172a;
 }
 
+.camera-panel {
+  padding-bottom: 12px;
+}
+
 .status-line {
   margin: 10px 0 0;
   color: #526071;
+  font-weight: 700;
 }
 
 .result {
@@ -129,8 +135,24 @@ video {
   display: block;
 }
 
+.result-banner {
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 900;
+  text-align: center;
+  background: #eaf7ef;
+  color: #0f5f3e;
+}
+
 .result.ok {
   border-color: #157347;
+}
+
+.result.ok .result-banner {
+  background: #eaf7ef;
+  color: #0f5f3e;
 }
 
 .result.used,
@@ -138,8 +160,19 @@ video {
   border-color: #b45309;
 }
 
+.result.used .result-banner,
+.result.warning .result-banner {
+  background: #fff7ed;
+  color: #9a4b00;
+}
+
 .result.error {
   border-color: #9b1c1c;
+}
+
+.result.error .result-banner {
+  background: #fbeaea;
+  color: #9b1c1c;
 }
 
 .result-grid,
@@ -166,7 +199,7 @@ video {
 .ticket-grid strong {
   display: block;
   margin-top: 4px;
-  font-size: clamp(22px, 4vw, 34px);
+  font-size: clamp(24px, 4vw, 42px);
 }
 
 .quantity strong {
@@ -178,6 +211,12 @@ video {
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 14px;
+}
+
+.actions button {
+  min-height: 64px;
+  min-width: 180px;
+  font-size: 18px;
 }
 
 .ticket-page {
@@ -233,5 +272,25 @@ video {
 
   main {
     padding: 12px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 900px) {
+  header {
+    padding: 10px 18px;
+  }
+
+  header p {
+    display: none;
+  }
+
+  .panel,
+  .result {
+    margin-bottom: 12px;
+    padding: 12px;
+  }
+
+  video {
+    height: clamp(180px, 30vh, 300px);
   }
 }
