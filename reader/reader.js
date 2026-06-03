@@ -10,6 +10,7 @@ const resultBox = document.getElementById("result");
 const resultBanner = document.getElementById("resultBanner");
 const useButton = document.getElementById("useButton");
 const cancelButton = document.getElementById("cancelButton");
+const ticketList = document.getElementById("ticketList");
 
 const fields = {
   status: document.getElementById("statusValue"),
@@ -18,6 +19,15 @@ const fields = {
   kana: document.getElementById("kanaValue"),
   transaction: document.getElementById("transactionValue"),
   ticket: document.getElementById("ticketValue"),
+};
+
+const summaryFields = {
+  remainingPeople: document.getElementById("remainingPeople"),
+  remainingQuantity: document.getElementById("remainingQuantity"),
+  usedPeople: document.getElementById("usedPeople"),
+  usedQuantity: document.getElementById("usedQuantity"),
+  totalPeople: document.getElementById("totalPeople"),
+  totalQuantity: document.getElementById("totalQuantity"),
 };
 
 let ticketMap = new Map();
@@ -103,6 +113,55 @@ function clearResult() {
   currentTicket = null;
 }
 
+function updateSummary() {
+  const tickets = [...ticketMap.values()];
+  const totalPeople = tickets.length;
+  const totalQuantity = tickets.reduce((sum, ticket) => sum + Number(ticket.quantity || 0), 0);
+  const usedTickets = tickets.filter((ticket) => ticket.status === "used");
+  const usedPeople = usedTickets.length;
+  const usedQuantity = usedTickets.reduce((sum, ticket) => sum + Number(ticket.quantity || 0), 0);
+  const remainingPeople = totalPeople - usedPeople;
+  const remainingQuantity = totalQuantity - usedQuantity;
+
+  summaryFields.remainingPeople.textContent = `${remainingPeople}人`;
+  summaryFields.remainingQuantity.textContent = `${remainingQuantity}基`;
+  summaryFields.usedPeople.textContent = `${usedPeople}人`;
+  summaryFields.usedQuantity.textContent = `${usedQuantity}基`;
+  summaryFields.totalPeople.textContent = `${totalPeople}人`;
+  summaryFields.totalQuantity.textContent = `${totalQuantity}基`;
+}
+
+function renderTicketList() {
+  const tickets = [...ticketMap.values()].sort((a, b) => {
+    const statusOrder = Number(a.status === "used") - Number(b.status === "used");
+    if (statusOrder !== 0) return statusOrder;
+    return String(a.kana || a.name || "").localeCompare(String(b.kana || b.name || ""), "ja");
+  });
+
+  if (!tickets.length) {
+    ticketList.innerHTML = '<p class="empty-list">まだデータを読み込んでいません。</p>';
+    updateSummary();
+    return;
+  }
+
+  ticketList.innerHTML = tickets
+    .map((ticket) => {
+      const used = ticket.status === "used";
+      return `
+        <div class="ticket-list-row ${used ? "is-used" : ""}">
+          <div>
+            <strong>${ticket.name || "-"}</strong>
+            <span>${ticket.kana || ""}</span>
+          </div>
+          <div class="list-quantity">${ticket.quantity || 0}基</div>
+          <div class="list-status">${used ? "受渡済" : "未受渡"}</div>
+        </div>
+      `;
+    })
+    .join("");
+  updateSummary();
+}
+
 function startNativeDetectorLoop() {
   if (!("BarcodeDetector" in window)) return;
   let detector;
@@ -162,6 +221,7 @@ async function markUsed() {
     used_at: currentTicket.used_at,
   });
   exportButton.disabled = false;
+  renderTicketList();
   await restartScanner("受渡済にしました。次のQRコードを読み取れます。");
 }
 
@@ -203,6 +263,7 @@ dataFile.addEventListener("change", async () => {
   usedLog = [];
   currentTicket = null;
   clearResult();
+  renderTicketList();
   dataStatus.textContent = `${data.event || "イベント"}: ${ticketMap.size}件のチケットを読み込みました。`;
   startButton.disabled = ticketMap.size === 0;
   switchCameraButton.disabled = ticketMap.size === 0;

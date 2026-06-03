@@ -25,6 +25,23 @@
         <button id="exportButton" class="secondary" disabled>受渡ログ出力</button>
       </div>
       <p id="dataStatus" class="status-line">reader_data.json を選択してください。</p>
+      <div id="summaryGrid" class="summary-grid" aria-label="受付状況">
+        <div>
+          <span>未受渡</span>
+          <strong id="remainingPeople">0人</strong>
+          <em id="remainingQuantity">0基</em>
+        </div>
+        <div>
+          <span>受渡済</span>
+          <strong id="usedPeople">0人</strong>
+          <em id="usedQuantity">0基</em>
+        </div>
+        <div>
+          <span>全体</span>
+          <strong id="totalPeople">0人</strong>
+          <em id="totalQuantity">0基</em>
+        </div>
+      </div>
     </section>
 
     <section class="panel camera-panel">
@@ -64,6 +81,12 @@
         <button id="useButton">受渡済にする</button>
         <button id="cancelButton" class="secondary">キャンセルして次を読む</button>
       </div>
+    </section>
+
+    <section id="ticketListPanel" class="panel list-panel">
+      <h2>読み込み済み一覧</h2>
+      <p class="status-line">reader_data.json に入っている氏名と基数です。</p>
+      <div id="ticketList" class="ticket-list"></div>
     </section>
   </main>
   <script src="./reader.js"></script>
