@@ -111,7 +111,7 @@ input[type="file"] {
 video {
   width: 100%;
   height: clamp(360px, 62vh, 720px);
-  height: clamp(360px, calc(100dvh - 260px), 720px);
+  height: clamp(300px, calc(100dvh - 380px), 660px);
   object-fit: cover;
   background: #111827;
   border-radius: 8px;
@@ -397,6 +397,6 @@ video {
 
   video {
     height: clamp(320px, 62vh, 680px);
-    height: clamp(320px, calc(100dvh - 230px), 680px);
+    height: clamp(280px, calc(100dvh - 330px), 620px);
   }
 }
