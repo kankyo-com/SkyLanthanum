@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>スカイランタン デジタルチケット</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="../vendor/zxing-browser.min.js"></script>
+</head>
+<body class="ticket-page">
+  <main class="ticket-card">
+    <p class="eyebrow">スカイランタン デジタルチケット</p>
+    <h1>受付提示用QRコード</h1>
+    <div id="qr" class="qr-box" aria-label="受付提示用QRコード"></div>
+    <p class="ticket-id">SKY2026-73593CA33285</p>
+    <p class="note">当日はこの画面を受付で提示してください。受付スタッフがQRコードを読み取り、受付用iPadに表示された内容を確認してスカイランタンをお渡しします。</p>
+  </main>
+  <script>
+    const writer = new ZXingBrowser.BrowserQRCodeSvgWriter();
+    writer.writeToDom('#qr', "SKY2026-73593CA33285", 420, 420);
+  </script>
+</body>
+</html>
