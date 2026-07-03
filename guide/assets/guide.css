@@ -1,0 +1,153 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #30343b;
+  background: #fff9f2;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.guide-page {
+  min-height: 100vh;
+  padding: 18px 14px 32px;
+}
+
+.guide-card {
+  width: min(680px, 100%);
+  margin: 0 auto;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #eadfd2;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(93, 68, 43, 0.1);
+}
+
+.guide-header {
+  padding: 24px 20px 20px;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(135deg, #e88946, #d45b45);
+}
+
+.guide-header h1 {
+  margin: 0;
+  font-size: clamp(25px, 7vw, 34px);
+}
+
+.guide-content { padding: 22px 18px 26px; }
+
+.thanks {
+  margin: 0 0 20px;
+  font-size: 18px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.info-block {
+  padding: 17px 16px;
+  margin: 0 0 14px;
+  background: #fff8ed;
+  border-left: 5px solid #e88946;
+  border-radius: 10px;
+}
+
+.info-block h2 {
+  margin: 0 0 7px;
+  font-size: 19px;
+}
+
+.info-block p,
+.notice-list {
+  margin: 0;
+  line-height: 1.8;
+}
+
+.notice-list { padding-left: 1.4em; }
+
+.closing {
+  margin: 22px 0 0;
+  font-size: 18px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.schedule {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schedule li {
+  display: grid;
+  grid-template-columns: 5.5em 1fr;
+  gap: 10px;
+  padding: 14px 4px;
+  border-bottom: 1px solid #eee2d5;
+  line-height: 1.55;
+}
+
+.schedule time {
+  color: #c95038;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.schedule-note {
+  margin: 20px 0 0;
+  color: #675f58;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.image-page { background: #f2f4f7; }
+
+.image-card {
+  width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.image-card h1 {
+  margin: 0 0 12px;
+  font-size: clamp(25px, 7vw, 34px);
+  text-align: center;
+}
+
+.image-card .lead {
+  padding: 15px 16px;
+  margin: 0 0 16px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(20, 34, 48, 0.08);
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.guide-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(20, 34, 48, 0.1);
+}
+
+.image-only {
+  padding: 0;
+  background: #d9e9f5;
+}
+
+.image-only .image-card { width: min(760px, 100%); }
+
+.image-only .guide-image {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+@media (max-width: 420px) {
+  .guide-page { padding: 10px 8px 24px; }
+  .guide-header { padding-inline: 14px; }
+  .guide-content { padding-inline: 14px; }
+  .schedule li { grid-template-columns: 4.7em 1fr; }
+  .image-only { padding: 0; }
+}
